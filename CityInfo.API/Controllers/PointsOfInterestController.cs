@@ -59,6 +59,12 @@ namespace CityInfo.API.Controllers
 			return Ok(pointOfInterest);
 		}
 
+		/// <summary>
+		/// Crea un punto de interes.
+		/// </summary>
+		/// <param name="cityId"></param>
+		/// <param name="pointOfInterest"></param>
+		/// <returns></returns>
 		[HttpPost("{cityId}/pointsofinterest")]
 		public IActionResult CreatePointOfInterest(int cityId,
 			[FromBody] PointOfInterestForCreationDto pointOfInterest )
@@ -102,6 +108,13 @@ namespace CityInfo.API.Controllers
 			{ cityId = cityId, id = finalPointOfInterest.Id });
 		}	
 
+		/// <summary>
+		/// Edita un punto de interes totalmente.
+		/// </summary>
+		/// <param name="cityId"></param>
+		/// <param name="PointOfInterestId"></param>
+		/// <param name="pointOfInterest"></param>
+		/// <returns></returns>
 		[HttpPut("{cityId}/pointsofinterest/{PointOfInterestId}")]
 		public IActionResult UpdatePointOfInterest(int cityId, int PointOfInterestId,
 			[FromBody] PointOfInterestForUpdateDto pointOfInterest)
@@ -143,12 +156,33 @@ namespace CityInfo.API.Controllers
 
 		}
 
+		/// <summary>
+		/// Edita parcialmente un punto de interes.
+		/// </summary>
+		/// <param name="cityId"></param>
+		/// <param name="PointOfInterestId"></param>
+		/// <param name="patchDoc"></param>
+		/// <returns></returns>
 		[HttpPatch("{cityId}/pointsofinterest/{PointOfInterestId}")]
 		public IActionResult PartiallyUpdatePointOfInterest(int cityId, int PointOfInterestId,
 			[FromBody] JsonPatchDocument<PointOfInterestForUpdateDto> patchDoc)
 		{
 
 			// Comprueba si la sintaxis de la entrada de datos es correcta con el estandar que usa patchdoc
+			// En body:
+			//[
+			//	{
+			//		"op": "replace",
+			//		"path": "/name",
+			//		"value": "Updated Updated - Central Park"
+			//	},
+			//	{
+			//		"op": "replace",
+			//		"path": "/description",
+			// 		"value": "Updated - Description"
+			// 	},
+			//
+			//]
 			if (patchDoc == null)
 			{
 				return BadRequest();
@@ -203,6 +237,12 @@ namespace CityInfo.API.Controllers
 			return NoContent();
 		}
 
+		/// <summary>
+		/// Borra un punto de interes.
+		/// </summary>
+		/// <param name="cityId"></param>
+		/// <param name="PointOfInterestId"></param>
+		/// <returns></returns>
 		[HttpDelete("{cityId}/pointsofinterest/{PointOfInterestId}")]
 		public IActionResult DeletePointOfInterest(int cityId, int PointOfInterestId)
 		{
