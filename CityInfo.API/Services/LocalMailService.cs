@@ -8,8 +8,9 @@ namespace CityInfo.API.Services
 {
 	public class LocalMailService : IMailService
 	{
-		private string _mailTo = "admin@mycompany.com";
-		private string _mailFrom = "noreply@mycompany.com";
+		// Cogemos los mails del archivo de configuración appSettings.json
+		private string _mailTo = Startup.Configuration["mailSettings:mailToAddress"];
+		private string _mailFrom = Startup.Configuration["mailSettings:mailFromAddress"];
 
 		public void Send(string subject, string message)
 		{
