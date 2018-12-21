@@ -147,26 +147,29 @@ namespace CityInfo.API.Controllers
 		public IActionResult PartiallyUpdatePointOfInterest(int cityId, int PointOfInterestId,
 			[FromBody] JsonPatchDocument<PointOfInterestForUpdateDto> patchDoc)
 		{
+
+			// Comprueba si la sintaxis de la entrada de datos es correcta con el estandar que usa patchdoc
 			if (patchDoc == null)
 			{
 				return BadRequest();
 			}
 
+			// Comprueba que exista la ciudad.
 			var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
-
 			if (city == null)
 			{
 				return NotFound();
 			}
 
+			// Comprueba que exista el punto de interes
 			var pointOfInterestFromStore = city.PointsOfInterest.FirstOrDefault(p =>
 			p.Id == PointOfInterestId);
-
 			if (pointOfInterestFromStore == null)
 			{
 				return NotFound();
 			}
 
+			
 			var pointOfInterestToPatch = new PointOfInterestForUpdateDto()
 			{
 				Name = pointOfInterestFromStore.Name,
@@ -175,10 +178,12 @@ namespace CityInfo.API.Controllers
 
 			patchDoc.ApplyTo(pointOfInterestToPatch, ModelState);
 
+			// Comprueba si el modelo cumple con las condiciones.
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
+
 
 			if (pointOfInterestToPatch.Description == pointOfInterestToPatch.Name)
 			{
@@ -201,7 +206,24 @@ namespace CityInfo.API.Controllers
 		[HttpDelete("{cityId}/pointsofinterest/{PointOfInterestId}")]
 		public IActionResult DeletePointOfInterest(int cityId, int PointOfInterestId)
 		{
+			// Comprueba si la ciudad existe.
+			var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+			if (city == null)
+			{
+				return NotFound();
+			}
 
+			// Comprueba si el punto de interes existe.
+			var pointOfInterestFromStore = city.PointsOfInterest.FirstOrDefault(p =>
+			p.Id == PointOfInterestId);
+			if (pointOfInterestFromStore == null)
+			{
+				return NotFound();
+			}
+
+			city.PointsOfInterest.Remove(pointOfInterestFromStore);
+
+			return NoContent();
 		}
 
 
