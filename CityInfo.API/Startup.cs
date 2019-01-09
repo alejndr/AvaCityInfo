@@ -53,6 +53,14 @@ namespace CityInfo.API
 #endif
 			var connectionString = Startup.Configuration["connectionStrings:cityInfoDBConnectionString"];
 			services.AddDbContext<CityInfoContext>(o => o.UseSqlServer(connectionString));
+
+			// When we learned about dependency injection, we learned that
+			// there were three lifetimes we could register to service with.
+			// Transient, for services that must be created, each time they are requested
+			// Scoped, for services that are created once per request and
+			// Singleton, for services that are created first time they are requested.
+
+			services.AddScoped<ICityInfoRepository, CityInfoRepository>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,12 +85,21 @@ namespace CityInfo.API
 
 			app.UseStatusCodePages();
 
+			AutoMapper.Mapper.Initialize(cfg =>
+			{
+				cfg.CreateMap<Entities.City, Models.CityWithoutPointsOfInterestDto>();
+				cfg.CreateMap<Entities.City, Models.CityDto>();
+				cfg.CreateMap<Models.PointOfInterestForCreationDto, Entities.PointOfInterest>();
+				cfg.CreateMap<Models.PointOfInterestForUpdateDto, Entities.PointOfInterest>();
+				cfg.CreateMap<Entities.PointOfInterest, Models.PointOfInterestForUpdateDto>();
+			});
+
 			app.UseMvc();
 
-			app.Run(async (context) =>
-			{
-				await context.Response.WriteAsync("Hello World!");
-			});
+			//app.Run(async (context) =>
+			//{
+			//	await context.Response.WriteAsync("Hello World!");
+			//});
 		}
 	}
 }
